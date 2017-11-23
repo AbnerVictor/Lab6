@@ -1,4 +1,4 @@
-package com.example.abnervictor.tkdic;
+package com.example.abnervictor.lab6;
 
 /**
  * Created by abnervictor on 2017/11/15.
@@ -25,8 +25,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-
-import com.example.abnervictor.lab6.R;
 
 /**
  * Custom ImageView for circular images in Android while maintaining the

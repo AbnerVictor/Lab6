@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context="com.example.abnervictor.lab6.MainActivity">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="battlefield1"
+        android:singleLine="true"
+        android:background="@null"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="40dp"
+        android:id="@+id/file_name"
+        />
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="180dp"
         android:layout_height="180dp"
@@ -13,14 +26,84 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="90dp"
+        android:id="@+id/disk_outter"
         >
-        <com.example.abnervictor.tkdic.CircularImageView
+        <com.example.abnervictor.lab6.CircularImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="20dp"
             android:src="@drawable/example"
+            android:id="@+id/disk_pic"
             />
     </android.support.constraint.ConstraintLayout>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        app:layout_constraintTop_toBottomOf="@id/disk_outter"
+        android:id="@+id/progressBar"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        app:layout_constraintLeft_toLeftOf="@id/passed_time"
+        app:layout_constraintBottom_toTopOf="@id/passed_time"
+        android:layout_marginBottom="3dp"
+        android:id="@+id/play_status"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        app:layout_constraintRight_toLeftOf="@id/progressBar"
+        app:layout_constraintBottom_toBottomOf="@id/progressBar"
+        android:id="@+id/passed_time"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        app:layout_constraintLeft_toRightOf="@id/progressBar"
+        app:layout_constraintBottom_toBottomOf="@id/progressBar"
+        android:id="@+id/total_time"
+        />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/play"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="60dp"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_stop"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        android:id="@+id/button_play_pause"
+        />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/stop"
+        app:layout_constraintTop_toTopOf="@id/button_play_pause"
+        app:layout_constraintLeft_toRightOf="@id/button_play_pause"
+        app:layout_constraintRight_toLeftOf="@id/button_quit"
+        android:id="@+id/button_stop"
+        />
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/quit"
+        android:layout_marginEnd="60dp"
+        app:layout_constraintTop_toTopOf="@id/button_play_pause"
+        app:layout_constraintLeft_toRightOf="@id/button_stop"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/button_quit"
+        />
+
 
 </android.support.constraint.ConstraintLayout>
