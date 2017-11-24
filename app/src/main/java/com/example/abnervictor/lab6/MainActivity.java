@@ -4,13 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,7 +17,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.RemoteException;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -28,9 +26,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -51,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private IBinder mBinder;
     private int status;//0 for Stop, 1 for Playing, 2 for Pause
     private int totaltime;//曲目长度
+    private String RootPath;
+    private FileHelper fileHelper;
 
     //读写权限
     private static boolean hasPermission;
@@ -70,19 +67,33 @@ public class MainActivity extends AppCompatActivity {
         verifyStoragePermissions(this);
         if (hasPermission){
             //复制raw文件夹中的文件到SD卡
-            String filename = "melt";
-            InputStream inputStream = this.getResources().openRawResource(R.raw.melt);
-            copyFilesFromStream(filename+".mp3", inputStream);
+            RootPath = Environment.getExternalStorageDirectory().getPath();
+            fileHelper = new FileHelper(RootPath);
+            fileHelper.createFolder(RootPath,"Lab6MusicPlayer");//在sd卡下新建文件夹
+            RootPath += "/Lab6MusicPlayer";
+            fileHelper.setRootPath(RootPath);//更新根目录路径
+            fileHelper.createFolder(RootPath, "music");//在根目录下新建音乐文件夹
+            fileHelper.createFolder(RootPath, "picture");//在根目录下新建图片文件夹
+            fileHelper.copyRawToFolder(this,R.raw.melt,"music","melt","mp3");//将音乐文件复制到文件夹
+            Bitmap bmp= BitmapFactory.decodeResource(getResources(), R.drawable.example);
+            fileHelper.copyBitmapToFolder(bmp,"picture","example");
+            fileHelper.copyRawToFolder(this,R.raw.melt_pic,"picture","melt","jpg");//将图片文件复制到文件夹
+            fileHelper.copyRawToFolder(this,R.raw.battlefield1,"music","battlefield1","mp3");//将音乐文件复制到文件夹
+            fileHelper.copyRawToFolder(this,R.raw.battlefield1_pic,"picture","battlefield1","jpg");//将图片文件复制到文件夹
 
-            inputStream = this.getResources().openRawResource(R.raw.melt_pic);
-            copyFilesFromStream(filename+".jpg", inputStream);
-
-            filename = "battlefield1";
-            inputStream = this.getResources().openRawResource(R.raw.battlefield1);
-            copyFilesFromStream(filename+".mp3", inputStream);
-
-            inputStream = this.getResources().openRawResource(R.raw.battlefield1_pic);
-            copyFilesFromStream(filename+".jpg", inputStream);
+//            String filename = "melt";
+//            InputStream inputStream = this.getResources().openRawResource(R.raw.melt);
+//            copyFilesFromStream(filename+".mp3", inputStream);
+//
+//            inputStream = this.getResources().openRawResource(R.raw.melt_pic);
+//            copyFilesFromStream(filename+".jpg", inputStream);
+//
+//            filename = "battlefield1";
+//            inputStream = this.getResources().openRawResource(R.raw.battlefield1);
+//            copyFilesFromStream(filename+".mp3", inputStream);
+//
+//            inputStream = this.getResources().openRawResource(R.raw.battlefield1_pic);
+//            copyFilesFromStream(filename+".jpg", inputStream);
             //复制raw文件夹中的文件到SD卡
 
             //绑定服务
@@ -145,33 +156,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void copyFilesFromStream(String filename, InputStream inputStream){
-        File DATA_PATH = Environment.getExternalStorageDirectory();
-        String externalStorage = Environment.getExternalStorageState();
-        if (externalStorage.equals(Environment.MEDIA_MOUNTED)){
-            String filePath = DATA_PATH.getPath() + File.separator + filename;//文件路径 + 分隔符 + 文件名
-            File file = new File(filePath);
-            try{
-                if (!file.exists()){
-                    //建立通道对象
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    //定义储存空间
-                    byte[] buffer = new byte[inputStream.available()];
-                    //开始读文件
-                    int length = 0;
-                    while ((length = inputStream.read(buffer)) != -1){
-                        //将buffer重的数据写到outputStream对象中
-                        fileOutputStream.write(buffer, 0, length);
-                    }//循环从输入流读取buffer字节
-                    fileOutputStream.flush();//刷新缓冲区
-                    fileOutputStream.close();//关闭流
-                    inputStream.close();
-                }//文件不存在时进行复制
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-    }//将文件流写入到程序文件夹
+//    private void copyFilesFromStream(String filename, InputStream inputStream){
+//        File DATA_PATH = Environment.getExternalStorageDirectory();
+//        String externalStorage = Environment.getExternalStorageState();
+//        if (externalStorage.equals(Environment.MEDIA_MOUNTED)){
+//            String filePath = DATA_PATH.getPath() + File.separator + filename;//文件路径 + 分隔符 + 文件名
+//            File file = new File(filePath);
+//            try{
+//                if (!file.exists()){
+//                    //建立通道对象
+//                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+//                    //定义储存空间
+//                    byte[] buffer = new byte[inputStream.available()];
+//                    //开始读文件
+//                    int length = 0;
+//                    while ((length = inputStream.read(buffer)) != -1){
+//                        //将buffer重的数据写到outputStream对象中
+//                        fileOutputStream.write(buffer, 0, length);
+//                    }//循环从输入流读取buffer字节
+//                    fileOutputStream.flush();//刷新缓冲区
+//                    fileOutputStream.close();//关闭流
+//                    inputStream.close();
+//                }//文件不存在时进行复制
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }
+//    }//将文件流写入到程序文件夹
 
     private void initService(){
         serviceConnection = new ServiceConnection() {
@@ -240,17 +251,16 @@ public class MainActivity extends AppCompatActivity {
                     seekBar.setMax(totaltime);
                     total_time.setText(time.format(new Date(totaltime)));
                     //获取歌曲封面图
-                    String picpath = Environment.getExternalStorageDirectory().getPath()+File.separator+file_name.getText().toString()+".jpg";
-                    File file = new File(picpath);
-                    if (file.exists()) {
-                        try{
-                            ContentResolver contentResolver = getContentResolver();
-                            Bitmap bm = MediaStore.Images.Media.getBitmap(contentResolver,Uri.fromFile(file));
-                            //将图片显示到ImageView中
-                            disk_pic.setImageBitmap(bm);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
+//                    try {
+//                        bm = MediaStore.Images.Media.getBitmap(contentResolver, Uri.fromFile(new File(picpath)));
+//                        disk_pic.setImageBitmap(bm);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+                    Bitmap bm = fileHelper.getBitmapFromFolder("picture",file_name.getText().toString(),"jpg");
+                    if(bm!=null){
+                        Log.d("setBitmap","bitmap set!");
+                        disk_pic.setImageBitmap(bm);
                     }
                     else{
                         disk_pic.setImageResource(R.drawable.example);
